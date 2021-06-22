@@ -3,9 +3,14 @@ import Meter from '../components/moistureMeter'
 import styles from '../styles/Home.module.css'
 import io from'socket.io-client'
 
+const getHumidityArray = value => {
+  let humidity = value.length < 6 ? value.length === 5 ? `0${value}` : `00${value}` : value;
+  return [...humidity.replace('.', '')] 
+}
+
 export default function Home() {
   const [form, setForm] = useState({
-    humidity: null, 
+    humidity: ['0','0','0','0','0'], 
   })
 
   useEffect(() => {
@@ -14,7 +19,8 @@ export default function Home() {
     socket.on('get-serial', ({ value }) => {
       setForm({
         ...form, 
-        humidity: value
+        humidity: getHumidityArray(value), 
+        percent: value
       })
     })
   }, [])

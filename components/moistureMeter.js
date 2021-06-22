@@ -1,4 +1,6 @@
+const unity = 10; 
 
+const getOpacity = (uni, indx, elements) => (+uni === 0 && indx === 0) ? 0 : 1;
 
 const Meter = ({ form }) => {
     const getDashArray = ({ percent }) => {
@@ -8,6 +10,9 @@ const Meter = ({ form }) => {
     const getDashoffset = (percent) => {
         let d = 240 * 3.14;
         return (d + (d * parseFloat(percent)) / 100)
+    }
+    const getTop = (value) => {
+        return - Number(value) * 60;
     }
     return ( 
         <div className="col-md-8 mx-auto">
@@ -29,14 +34,34 @@ const Meter = ({ form }) => {
                                             fill='transparent'
                                             stroke={'#26B6EA'}
                                             strokeWidth="17"
-                                            // strokeLinecap=""
-                                            strokeDasharray={getDashArray(form.humidity ||  0)}
-                                            strokeDashoffset={-getDashoffset(form.humidity || 0)}
+                                            strokeLinecap="round"
+                                            strokeDasharray={getDashArray(form.percent ||  0)}
+                                            strokeDashoffset={-getDashoffset(form.percent || 0)}
                                         />
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="total">{form.humidity || '00.00'} <span>%</span></p>
+                                    <div className="d-flex containerClock overflow-hidden">
+                                        {form.humidity && form.humidity.map((uni, index) => (
+                                            <div className="value" key={index}>
+                                                <ul className="scrollable" style={{ top: getTop(uni), opacity: getOpacity(uni, index) }}>
+                                                    {Array.from(Array(unity).keys()).map((elem, indx) => (
+                                                        <li key={indx}>
+                                                            <p className="total">{index == 2 ? `${elem}.` : elem}</p>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        ))}
+                                        <div className="value">
+                                            <ul className="scrollable">
+                                                <li>
+                                                    <p className="total"><span>%</span></p>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        
+                                    </div>
                                     <p className="type">Current Humidity</p>
                                 </div>
                                 <img className="img-fluid" src="/drop.svg" />
@@ -59,7 +84,7 @@ const Meter = ({ form }) => {
                 }
                 svg circle {
                     cursor: pointer;
-                    transition: all 1s;
+                    transition: all 2s;
                     position: absolute;
                     top: 50%;
                     left: 50%;
@@ -84,8 +109,8 @@ const Meter = ({ form }) => {
                     top: 25%; 
                 }
                 .graphic-center {
-                    width: 230px;
-                    height: 230px;
+                    width: 222px;
+                    height: 222px;
                     position: absolute;
                     top: 50%;
                     left: 50%;
@@ -116,6 +141,15 @@ const Meter = ({ form }) => {
                 .type {
                     color: #26B6EA;
                     font-size: 15px;
+                }
+                .containerClock {
+                    height: 60px;
+                }
+                .scrollable {
+                    position: relative;
+                    transition: all 2s;
+                    list-style: none; 
+                    padding: 0;
                 }
             `}
             </style>
